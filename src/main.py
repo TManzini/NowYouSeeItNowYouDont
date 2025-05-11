@@ -6,13 +6,14 @@ import argparse
 
 from utils import remove_obscured_labels, get_class_counts_from_ids, get_intersecting_ids
 from plot import plot_transistion_matrix, plot_mulistrategy_class_balances, plot_sat_views_per_building_histogram
-from analysis import chi_squared_test, z_test_per_label, get_coincident_buildings_per_ortho, get_satellite_building_counts
+from analysis import chi_squared_test, z_test_per_label, get_coincident_buildings_per_ortho, get_satellite_building_counts, \
+                     get_building_count_per_disaster, get_ortho_count_per_disaster, get_underestimation_rate
 from replicate import get_probability_of_disagreement, get_best_antioracle_label_for_building, get_best_oracle_label_for_building, \
                       get_best_temporal_label_for_building, compute_paired_difference_views, group_buildings_temporally
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(prog="compute_satellite_BDA_dataset_stats", description="This program replicates the results of the 2025 FAccT Paper \"Now you see it, Now you don’t: Damage Label Agreement in Drone & Satellite Post-Disaster Imagery\"")
+    parser = argparse.ArgumentParser(prog="compute_satellite_BDA_dataset_stats", description="This program replicates the results of the 2025 FAccT Paper INSERT NAME TODO.")
     parser.add_argument("--satellite_annotations_path_map", type=str, help="The path to the satellite annotations file path map.")
     parser.add_argument("--drone_annotations_path_map", type=str, help="The path to the suas annotations file path map.")
     parser.add_argument("--output_folder_path", type=str, help="The path to the output folder file.")
@@ -33,7 +34,8 @@ if __name__ == "__main__":
         multiview_df = pd.read_csv(args.multiview_stats_file_path)
 
         suas_data = {}
-        satellite_data = []
+        satellite_data = {}
+        raw_satellite_data = []
 
         for geotif_path, drone_annotation_path in drone_annotations_path_map.items():
             # Load the annotations
@@ -51,17 +53,25 @@ if __name__ == "__main__":
                 closest_annotation_path_annotations_data = json.loads(f.read())
                 f.close()
 
-                satellite_data.append(closest_annotation_path_annotations_data)
+                raw_satellite_data.append(closest_annotation_path_annotations_data)
+                satellite_data[geotif_path] = closest_annotation_path_annotations_data
             except TypeError as e:
                 print("Skipping", geotif_path, "->", sat_annotation_path, "because of", type(e))
 
-        non_obscured_sat_data = remove_obscured_labels(satellite_data)
+        non_obscured_sat_data = remove_obscured_labels(raw_satellite_data)
 
         valid_ids = get_intersecting_ids(list(suas_data.values()), non_obscured_sat_data)
+        suas_coincident_buildings_per_ortho = get_coincident_buildings_per_ortho(valid_ids, suas_data)
+        sat_coincident_buildings_per_ortho = get_coincident_buildings_per_ortho(valid_ids, satellite_data)
 
         print("\n\nComputing sUAS vs Satellite Statistics....")
-        print("Count of coincident buildings:", sum(get_coincident_buildings_per_ortho(valid_ids, suas_data).values()))
+        print("Count of coincident buildings:", sum(suas_coincident_buildings_per_ortho.values()))
         print("Count of coincident views:", get_satellite_building_counts(non_obscured_sat_data, valid_ids))
+        print("Count of coincident buildings per disaster:", get_building_count_per_disaster(suas_coincident_buildings_per_ortho, multiview_df))
+        print("Count of sUAS orthomosaics per disaster:", get_ortho_count_per_disaster(suas_coincident_buildings_per_ortho, multiview_df, "sUAS"))
+        print("Count of satellite orthomosaics per disaster:", get_ortho_count_per_disaster(sat_coincident_buildings_per_ortho, multiview_df, "Satellite"))
+        
+
 
         closest_suas_labels_abs, closest_sat_labels_abs = get_best_temporal_label_for_building(list(suas_data.values()), non_obscured_sat_data, valid_ids, multiview_df, "abs")
         closest_suas_labels_real, closest_sat_labels_real = get_best_temporal_label_for_building(list(suas_data.values()), non_obscured_sat_data, valid_ids, multiview_df, "real")
@@ -117,6 +127,17 @@ if __name__ == "__main__":
         print("\tclosest_to_suas_disagreement_prob_ignore_obscured", closest_to_suas_disagreement_prob_ignore_obscured)
         print("\toracle_disagreement_prob_ignore_obscured", oracle_disagreement_prob_ignore_obscured)
         print("\tantioracle_disagreement_prob_ignore_obscured", antioracle_disagreement_prob_ignore_obscured)
+
+        print("\n\nWhat are the under-estimation rates of the different strategies per label?")
+        oracle_overestimation_rate_ignore_obscured = get_underestimation_rate(oracle_suas_labels, oracle_sat_labels, True)
+        antioracle_overestimation_rate_ignore_obscured = get_underestimation_rate(antioracle_suas_labels, antioracle_sat_labels, True)
+        closest_to_suas_overestimation_rate_ignore_obscured = get_underestimation_rate(closest_suas_labels_abs, closest_sat_labels_abs, True)
+        closest_to_disaster_overestimation_rate_ignore_obscured = get_underestimation_rate(closest_suas_labels_real, closest_sat_labels_real, True)
+
+        print("\tclosest_to_disaster_overestimation_rate_ignore_obscured", closest_to_disaster_overestimation_rate_ignore_obscured)
+        print("\tclosest_to_suas_overestimation_rate_ignore_obscured", closest_to_suas_overestimation_rate_ignore_obscured)
+        print("\toracle_overestimation_rate_ignore_obscured", oracle_overestimation_rate_ignore_obscured)
+        print("\tantioracle_overestimation_rate_ignore_obscured", antioracle_overestimation_rate_ignore_obscured)
 
         # Compute Transisition Matrix for the change in labels between labels (y-axis -> sUAs label, x-axis -> satellite label)
         print("\n\nGenerating Oracle Transition Matrix...")

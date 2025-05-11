@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from constants import PRE_OR_POST_EVENT, EXCLUDED_FILENAMES, DAYS_AFTER_SUAS_ORTHO, DATE, FILENAME
+from constants import PRE_OR_POST_EVENT, EXCLUDED_FILENAMES, DAYS_AFTER_SUAS_ORTHO, DATE, FILENAME, EVENT, SOURCE
 
 
 def days_between(d1, d2):
@@ -22,7 +22,7 @@ def is_excluded_file(filename):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(prog="make_metadata_files", description="This program produces the metatdata files necessary to run the replciation of the 2025 FAccT Paper \"Now you see it, Now you don’t: Damage Label Agreement in Drone & Satellite Post-Disaster Imagery\"")
+    parser = argparse.ArgumentParser(prog="make_metadata_files", description="This program produces the metatdata files necessary to run the replciation of the FAccT25 paper TODO")
     parser.add_argument("--crasar_u_droids_dir", type=str, help="The path to the satellite annotations file path map.")
     parser.add_argument("--output_stats_file", type=str, help="The path to the suas annotations file path map.")
     parser.add_argument("--output_suas_path_map", type=str, help="The path to the output folder file.")
@@ -57,10 +57,16 @@ if __name__ == "__main__":
     for sat_file in satellite_path_map.keys():
         for suas_file in suas_path_map.keys(): 
             if suas_file in sat_file:
-                days_after_suas_ortho[sat_file] = {FILENAME: sat_file, DAYS_AFTER_SUAS_ORTHO: days_between(ortho_date[suas_file], ortho_date[sat_file])}
+                days_after_suas_ortho[sat_file] = {EVENT:stats_df[stats_df["Orthomosaic"] == sat_file][EVENT].iloc[0],
+                                                   SOURCE:stats_df[stats_df["Orthomosaic"] == sat_file][SOURCE].iloc[0],
+                                                   FILENAME: sat_file,
+                                                   DAYS_AFTER_SUAS_ORTHO: days_between(ortho_date[suas_file], ortho_date[sat_file])}
     
     for suas_file in suas_path_map.keys():
-        days_after_suas_ortho[suas_file] = {FILENAME: suas_file, DAYS_AFTER_SUAS_ORTHO: 0}
+        days_after_suas_ortho[suas_file] = {EVENT:stats_df[stats_df["Orthomosaic"] == suas_file][EVENT].iloc[0],
+                                            SOURCE:stats_df[stats_df["Orthomosaic"] == suas_file][SOURCE].iloc[0],
+                                            FILENAME: suas_file,
+                                            DAYS_AFTER_SUAS_ORTHO: 0}
 
     pd.DataFrame(days_after_suas_ortho).transpose().to_csv(args.output_stats_file, index=False)
 
