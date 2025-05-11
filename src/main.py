@@ -12,7 +12,7 @@ from replicate import get_probability_of_disagreement, get_best_antioracle_label
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(prog="compute_satellite_BDA_dataset_stats", description="This program replicates the results of the 2025 FAccT Paper INSERT NAME TODO.")
+    parser = argparse.ArgumentParser(prog="compute_satellite_BDA_dataset_stats", description="This program replicates the results of the 2025 FAccT Paper \"Now you see it, Now you don’t: Damage Label Agreement in Drone & Satellite Post-Disaster Imagery\"")
     parser.add_argument("--satellite_annotations_path_map", type=str, help="The path to the satellite annotations file path map.")
     parser.add_argument("--drone_annotations_path_map", type=str, help="The path to the suas annotations file path map.")
     parser.add_argument("--output_folder_path", type=str, help="The path to the output folder file.")

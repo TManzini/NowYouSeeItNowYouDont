@@ -5,8 +5,8 @@ set PYTHONPATH=./src/
 pip install -r requirements.txt
 
 ::Select the directories where the data necessary for the replication should be stored
-set data_download_directory="H:/replicate/CRASAR-U-DROIDs"
-set outputs_folder=./outputs
+set data_download_directory="TODO - CHANGE TO WHERE YOU WANT TO DOWNLOAD THE DATA"
+set outputs_folder="TODO - CHANGE TO WHERE YOU WANT TO WRITE THE OUTPUTS"
 
 ::Download the sUAS, Satellite, and metadata data necessary for the replication.
 ::The replication relies on data from revision: 76fa52105ca607cb4563c746d37fb638825b8a26

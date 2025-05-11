@@ -22,7 +22,7 @@ def is_excluded_file(filename):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(prog="make_metadata_files", description="This program produces the metatdata files necessary to run the replciation of the FAccT25 paper TODO")
+    parser = argparse.ArgumentParser(prog="make_metadata_files", description="This program produces the metatdata files necessary to run the replciation of the 2025 FAccT Paper \"Now you see it, Now you don’t: Damage Label Agreement in Drone & Satellite Post-Disaster Imagery\"")
     parser.add_argument("--crasar_u_droids_dir", type=str, help="The path to the satellite annotations file path map.")
     parser.add_argument("--output_stats_file", type=str, help="The path to the suas annotations file path map.")
     parser.add_argument("--output_suas_path_map", type=str, help="The path to the output folder file.")
