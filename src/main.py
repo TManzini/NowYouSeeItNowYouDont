@@ -125,6 +125,8 @@ if __name__ == "__main__":
         plot_transistion_matrix(closest_suas_labels_abs, closest_sat_labels_abs, args.output_folder_path, "Satellite Closest to Drone", True)
         plot_transistion_matrix(closest_suas_labels_real, closest_sat_labels_real, args.output_folder_path, "Satellite Closest to Disaster ", True)
 
+        plot_sat_views_per_building_histogram(non_obscured_sat_data, valid_ids, args.output_folder_path)
+
         # With only the sat orthos, compute the change with (time, view)
         suas_days_sat_data = group_buildings_temporally(non_obscured_sat_data, multiview_df)
         agree_dist, disagree_dist = compute_paired_difference_views(suas_days_sat_data, "days")
