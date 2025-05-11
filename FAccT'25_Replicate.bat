@@ -8,6 +8,9 @@ pip install -r requirements.txt
 set data_download_directory="TODO - CHANGE TO WHERE YOU WANT TO DOWNLOAD THE DATA"
 set outputs_folder="TODO - CHANGE TO WHERE YOU WANT TO WRITE THE OUTPUTS"
 
+::Login to the huggingface command line interface
+huggingface-cli login
+
 ::Download the sUAS, Satellite, and metadata data necessary for the replication.
 ::The replication relies on data from revision: 76fa52105ca607cb4563c746d37fb638825b8a26
 huggingface-cli download CRASAR/CRASAR-U-DROIDs --include "*SATELLITE/building_damage_assessment/*.json" --repo-type dataset --local-dir %data_download_directory% --revision 76fa52105ca607cb4563c746d37fb638825b8a26
