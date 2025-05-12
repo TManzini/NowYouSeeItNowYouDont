@@ -12,10 +12,10 @@ set outputs_folder="TODO - CHANGE TO WHERE YOU WANT TO WRITE THE OUTPUTS"
 huggingface-cli login
 
 ::Download the sUAS, Satellite, and metadata data necessary for the replication.
-::The replication relies on data from revision: 76fa52105ca607cb4563c746d37fb638825b8a26
-huggingface-cli download CRASAR/CRASAR-U-DROIDs --include "*SATELLITE/building_damage_assessment/*.json" --repo-type dataset --local-dir %data_download_directory% --revision 76fa52105ca607cb4563c746d37fb638825b8a26
-huggingface-cli download CRASAR/CRASAR-U-DROIDs --include "*sUAS/building_damage_assessment/*.json" --repo-type dataset --local-dir %data_download_directory% --revision 76fa52105ca607cb4563c746d37fb638825b8a26
-huggingface-cli download CRASAR/CRASAR-U-DROIDs --include "statistics.csv" --repo-type dataset --local-dir %data_download_directory% --revision 76fa52105ca607cb4563c746d37fb638825b8a26
+::The replication relies on data from revision: 58f0d5ea2544dec8c126ac066e236943f26d0b7e
+huggingface-cli download CRASAR/CRASAR-U-DROIDs --include "*SATELLITE/building_damage_assessment/*.json" --repo-type dataset --local-dir %data_download_directory% --revision 58f0d5ea2544dec8c126ac066e236943f26d0b7e
+huggingface-cli download CRASAR/CRASAR-U-DROIDs --include "*sUAS/building_damage_assessment/*.json" --repo-type dataset --local-dir %data_download_directory% --revision 58f0d5ea2544dec8c126ac066e236943f26d0b7e
+huggingface-cli download CRASAR/CRASAR-U-DROIDs --include "statistics.csv" --repo-type dataset --local-dir %data_download_directory% --revision 58f0d5ea2544dec8c126ac066e236943f26d0b7e
 
 ::Select & organize the data that will be used for the replication from what was downloaded...
 set output_stats_file=%outputs_folder%/stats.csv
